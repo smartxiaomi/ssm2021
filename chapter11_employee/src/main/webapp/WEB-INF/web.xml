@@ -3,6 +3,12 @@
          xmlns="http://java.sun.com/xml/ns/javaee"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
+
+    <!-- 添加欢迎页面 -->
+    <welcome-file-list>
+        <welcome-file>employee.html</welcome-file>
+    </welcome-file-list>
+
     <!--Spring MVC的servlet配置-->
     <servlet>
         <servlet-name>dispatcherServlet</servlet-name>

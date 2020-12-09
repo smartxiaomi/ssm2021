@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ElementUI入门案例</title>
+    <!--导入vue-->
+    <script type="text/javascript" src="js/vue.js"></script>
+    <!--导入axios-->
+    <script src="js/axios-0.19.0.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="element-ui/lib/index.js"></script>
+
+</head>
+<body>
+<!-- 创建Vue的容器 -->
+<div id="app">
+
+    <!-- 页面容器，由头部和主体两个部分组成 -->
+    <el-container>
+        <!-- 头部 -->
+        <el-header><h1>入门案例</h1></el-header>
+        <!-- 主体 -->
+        <el-main>
+            <!--代表一行-->
+            <el-row>
+                <!-- 不同的按钮样式 -->
+                <el-button>默认按钮</el-button>
+                <el-button type="primary">主要按钮</el-button>
+                <el-button type="success">成功按钮</el-button>
+                <el-button type="info">信息按钮</el-button>
+                <el-button type="warning">警告按钮</el-button>
+                <el-button type="danger">危险按钮</el-button>
+            </el-row>
+        </el-main>
+    </el-container>
+</div>
+
+<script type="text/javascript">
+    /* 创建Vue对象*/
+    new Vue({
+        el: "#app"
+    });
+</script>
+</body>
+</html>

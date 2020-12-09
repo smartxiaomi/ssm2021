@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>显示员工列表</title>
+    <!--导入vue-->
+    <script type="text/javascript" src="js/vue.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="element-ui/lib/index.js"></script>
+    <!--导入axios-->
+    <script src="js/axios-0.19.0.js"></script>
+
+    <style>
+        /* 修改默认的样式 */
+        .el-main {
+            padding: 10px;
+        }
+
+        .el-row {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- 一行的查询按钮 -->
+    <el-row>
+        <!-- 一行分成24列 -->
+        <el-col :span="24">
+            <!-- inline：以一行的方式显示，model：绑定的提交参数对象 -->
+            <el-form :inline="true" :model="param" size="small">
+                <!-- @change值发生变化就查询，调用changeCondition方法 -->
+                <el-form-item label="姓名">
+                    <!-- 绑定param.name属性 -->
+                    <el-input style="width:150px"
+                              clearable @change="changeCondition" v-model="param.name"
+                              prefix-icon="el-icon-search" placeholder="输入查询姓名"></el-input>
+                </el-form-item>
+                <el-form-item label="性别">
+                    <!-- 绑定param.sex属性 -->
+                    <el-select clearable v-model="param.sex" placeholder="请选择" style="width:100px" @change="changeCondition">
+                        <el-option label="男" value="男"></el-option>
+                        <el-option label="女" value="女"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="部门">
+                    <!--
+                    clearable 有清除按钮
+                    filterable 可以输入文字过滤
+                    multiple 可以多选
+                    multiple-limit 最多选3个(注：前面要加冒号，否则报错) -->
+                    <el-select clearable filterable multiple
+                               :multiple-limit="3"
+                               v-model="param.departId" placeholder="请选择一个或多个部门"
+                               style="width: 250px" @change="changeCondition">
+                        <!-- 异步加载所有部门并且显示 -->
+                        <el-option v-for="depart in departs" :key="depart.id" :label="depart.name" :value="depart.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="出生日期">
+                    <!-- 绑定param.birthday属性 -->
+                    <el-date-picker style="width: 280px"
+                                    v-model="param.birthday"
+                                    type="monthrange" @change="changeCondition"
+                                    range-separator="至"
+                                    start-placeholder="开始月份"
+                                    end-placeholder="结束月份"
+                                    format="yyyy-MM-dd"
+                                    value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-form-item>
+                <!-- 三个按钮 -->
+                <el-form-item>
+                    <el-button type="success" plain size="small" icon="el-icon-document-delete" @click="clearCondition">清除</el-button>
+                    <el-button type="danger" plain size="small" icon="el-icon-delete" @click="deleteEmployees">删除</el-button>
+                    <el-button type="primary" plain size="small" icon="el-icon-document" @click="showAddDialog">添加</el-button>
+                </el-form-item>
+            </el-form>
+        </el-col>
+    </el-row>
+
+    <!--表格显示数据部分-->
+    <el-row>
+        <el-col :span="24">
+
+            <!--
+            @selection-change前面的复选框发生变化激活的事件，
+            data属性用于绑定pageBean对象中的data属性，pageBean异步加载获取
+            -->
+            <el-table :data="pageBean.data" max-height="95%" style="width: 100%" @selection-change="handleSelectionChange"
+                      :header-cell-style="{background:'#02b5fc',color:'white'}" border>
+
+                <!--表格前面的复选框-->
+                <el-table-column type="selection" width="55"></el-table-column>
+
+                <!-- index是生成序号的方法 -->
+                <el-table-column
+                        label="序号" type="index" width="60" :index="indexMethod">
+                </el-table-column>
+
+                <!--每一列绑定一行对象中相应的属性 -->
+                <el-table-column
+                        prop="name"
+                        label="姓名">
+                </el-table-column>
+
+                <el-table-column
+                        prop="sex"
+                        label="性别">
+                </el-table-column>
+
+                <el-table-column
+                        prop="salary"
+                        label="工资" :formatter="formatSalary">
+                </el-table-column>
+
+                <el-table-column
+                        prop="birthday" label="生日">
+                </el-table-column>
+
+                <el-table-column
+                        prop="age" label="年龄">
+                </el-table-column>
+
+                <el-table-column
+                        prop="depart.name" label="所在部门">
+                </el-table-column>
+
+                <el-table-column label="操作" width="200">
+                    <!-- scope表示表格中所有的数据对象 -->
+                    <template slot-scope="scope">
+                        <!-- scope.row表示这一行数据对象 -->
+                        <el-button
+                                size="mini" icon="el-icon-edit" type="success" plain
+                                @click="handleEdit(scope.$index, scope.row)">编辑
+                        </el-button>
+                        <el-button
+                                size="mini"
+                                type="warning" icon="el-icon-delete" plain
+                                @click="handleDelete(scope.$index, scope.row)">删除
+                        </el-button>
+                    </template>
+                </el-table-column>
+
+            </el-table>
+
+        </el-col>
+    </el-row>
+
+    <!--分页部分-->
+    <el-row>
+        <el-col :span="24">
+            <!--
+            @size-change表示修改页面大小激活的函数
+            @current-change表示修改当前页激活的函数
+            current-page 表示当前页号
+            page-sizes 表示页面大小的选项值
+            page-size 表示默认每页的大小
+            layout 表示分页组件的组成元素
+            total 表示总页数
+            -->
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="1"
+                    :page-sizes="[3,5,10]"
+                    :page-size="5"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pageBean.count">
+            </el-pagination>
+        </el-col>
+    </el-row>
+
+    <!--
+    新增和修改对话框
+    close-on-click-modal:是否可以通过点击其它位置关闭对话框
+     -->
+    <el-dialog title="员工信息" :visible.sync="dialogFormVisible" width="30%" @close="employeeCancel"
+               :close-on-click-modal="false">
+        <!-- status-icon 为输入框添加了表示校验结果的反馈图标-->
+        <el-form :model="form" :rules="rules" label-width="100px" size="small" ref="employeeForm" status-icon>
+            <!-- 绑定form对象中的各个属性 -->
+            <el-form-item label="姓名" prop="name">
+                <el-input v-model="form.name" autocomplete="off" placeholder="请输入姓名" prefix-icon="el-icon-user" style="width:85%"></el-input>
+            </el-form-item>
+
+            <el-form-item label="性别" prop="sex">
+                <el-radio v-model="form.sex" label="男">男</el-radio>
+                <el-radio v-model="form.sex" label="女">女</el-radio>
+            </el-form-item>
+
+            <el-form-item label="工资" prop="salary">
+                <el-input v-model="form.salary" type="text" autocomplete="off" placeholder="请输入工资" style="width:85%">
+                    <template slot="prepend" style="width:30px;">￥</template>
+                </el-input>
+            </el-form-item>
+
+            <el-form-item label="生日" prop="birthday">
+                <!--要指定值为yyyy年MM月dd日格式，Spring会自动封装到java.sql.Date类型中-->
+                <el-date-picker style="width:85%"
+                                v-model="form.birthday"
+                                type="date" format="yyyy-MM-dd" value-format="yyyy年MM月dd日"
+                                placeholder="选择或输入日期 (格式：年-月-日)">
+                </el-date-picker>
+            </el-form-item>
+
+            <!--部门从部门表中异步加载到下拉列表中-->
+            <el-form-item label="部门" prop="departId">
+                <el-select v-model="form.departId" placeholder="选择或输入部门" filterable style="width:85%">
+                    <!-- 值是id，显示的文本是name -->
+                    <el-option
+                            v-for="depart in departs"
+                            :key="depart.id"
+                            :label="depart.name"
+                            :value="depart.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <!-- 点击激活相应的方法 -->
+            <el-button @click="employeeCancel" icon="el-icon-ice-cream-round">取 消</el-button>
+            <el-button type="primary" @click="saveEmployee" icon="el-icon-milk-tea">确 定</el-button>
+        </div>
+    </el-dialog>
+</div>
+
+<!--  导入自己写的JS代码-->
+<script src="js/employee.js"></script>
+</body>
+</html>
