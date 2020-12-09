@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>v-on绑定事件</title>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <!-- 绑定data中的username -->
+    <input type="text" :value="username">
+    <hr/>
+    <!-- 绑定methods中的函数名，如果调用没有参数，函数后面的括号可以省略 -->
+    <input type="button" v-on:click="change1()" value="变身1">
+    <input type="button" @click="change2()" value="变身2">
+</div>
+
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        data: {
+            username: "白骨精"
+        },
+        methods: {
+            change1() {
+                this.username = "孙悟空";
+            },
+            change2() {
+                this.username = "猪八戒";
+            }
+        }
+    });
+</script>
+</body>
+</html>

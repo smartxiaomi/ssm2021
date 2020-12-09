@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.19.0.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <h2>用户登录</h2>
+    <table>
+        <tr>
+            <td>用户名</td>
+            <td><input type="text" name="username" id="username"/></td>
+        </tr>
+        <tr>
+            <td>密码</td>
+            <td><input type="password" name="password" id="password"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><input type="button" value="登录" id="btnLogin" @click="login"/></td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        data: {
+
+        },
+        methods: {
+            login() {
+                //获取用户名和密码
+                let username = document.getElementById("username").value;
+                let password = document.getElementById("password").value;
+                //拼接参数
+                let param = "username=" + username + "&password=" + password;
+                //异步提交
+                axios.post("login", param).then(resp => {
+                    alert(resp.data);
+                })
+            }
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>v-for遍历</title>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <ul>
+        <!-- 遍历普通数组 -->
+        <li v-for="name in names">{{name}}</li>
+    </ul>
+
+    <ul>
+        <!-- 遍历对象数组 -->
+        <li v-for="(person, index) in persons">第{{index}}号 姓名：{{person.name}} 年龄：{{person.age}}</li>
+    </ul>
+
+    <ul>
+        <!-- 遍历对象的属性 -->
+        <li v-for="(value,key) in person">属性值：{{value}}， 属性名：{{key}}</li>
+    </ul>
+
+    <!-- 遍历固定次数 -->
+    <span v-for="i in 10">{{i}}&nbsp;</span>
+</div>
+
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        data: {
+            //普通数组
+            names: ["Jack","Rose","NewBoy","Tom"],
+            //对象数组
+            persons: [{
+                name: "孙悟空",
+                age: 30
+            },{
+                name: "猪八戒",
+                age: 28
+            },{
+                name: "沙悟净",
+                age: 26
+            }],
+            //对象
+            person : {
+                name: "唐三藏",
+                age: 20,
+                sex: "男"
+            }
+        }
+    });
+</script>
+</body>
+</html>

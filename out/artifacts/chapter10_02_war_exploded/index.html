@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue模板</title>
+    <!-- 导入vue -->
+    <script src="js/vue.js"></script>
+    <!-- 导入axios -->
+    <script src="js/axios-0.19.0.js"></script>
+</head>
+<body>
+<div id="app">
+    <!-- 失去焦点判断用户名是否存在 -->
+    用户名：<input type="text" name="username" id="username" @blur="checkUser()">
+    <!-- 显示判断的结果 -->
+    <span id="userInfo">{{msg}}</span>
+</div>
+
+<script type="text/javascript">
+    new Vue({
+        el: "#app",
+        data: {
+            //默认msg中的内容为空
+            msg: "",
+        },
+        methods: {
+            checkUser() {
+                //请求的地址和参数
+                let param = "username=" + document.getElementById("username").value;
+                //POST请求
+                axios.post("user", param)
+                    .then(result => {
+                    //将服务器返回的结果直接给msg值，显示即可
+                    this.msg = result.data;
+                }).catch(error => {
+                    alert("服务器出现异常：" + error.message);
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

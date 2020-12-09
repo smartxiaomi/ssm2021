@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssmbook2020.dao.EmployeeDao">
+    <!--员工的映射-->
+    <resultMap id="employeeMap" type="employee">
+        <result column="did" property="depart.id"/>
+        <result column="dname" property="depart.name"/>
+    </resultMap>
+
+    <!--查询条件的代码段-->
+    <sql id="paramSql">
+        <where>
+            <!-- 这里要指定是哪个表的name -->
+            <if test="param.name!=null and param.name!=''">
+                e.name like "%"#{param.name}"%"
+            </if>
+            <if test="param.sex!=null and param.sex!=''">
+                and sex = #{param.sex}
+            </if>
+            <!-- 可以查询多个部门 -->
+            <if test="param.departId!=null and param.departId.size>0">
+                and depart_id in
+                <foreach collection="param.departId" open="(" item="id" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <!-- 在接受list的时候加了判断 list!='' ,引起了集合与String类型的比较，这里birthday是一个集合 -->
+            <if test="param.birthday!=null and param.birthday.size > 0">
+                <!-- 这里生日是一个List集合，第一个日期是0，第二个日期是1 -->
+                and birthday between #{param.birthday[0]} and #{param.birthday[1]}
+            </if>
+        </where>
+    </sql>
+
+    <!--删除多个员工-->
+    <delete id="deleteEmployees">
+        delete from employee where id in
+        <foreach collection="array" open="(" separator="," item="id" close=")">
+           #{id}
+        </foreach>
+    </delete>
+
+    <!--查询1页的员工数据，按员工id排序，年龄通过生日计算出来 -->
+    <select id="findEmployees" resultMap="employeeMap">
+        SELECT e.*, TIMESTAMPDIFF(YEAR,birthday,NOW()) AS age, d.id did, d.name dname
+        FROM employee e LEFT JOIN depart d ON e.depart_id = d.id
+        <include refid="paramSql"/>
+        ORDER BY e.id LIMIT #{param.begin},#{param.size}
+    </select>
+
+    <!--查询总记录数-->
+    <select id="findCount" resultType="java.lang.Integer">
+        select count(*) from employee e
+        <include refid="paramSql"/>
+    </select>
+</mapper>

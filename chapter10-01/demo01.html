@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>入门案例</title>
+    <!-- 导入vue.js -->
+    <script src="js/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <!--插值变量名-->
+    姓名：{{name}} <br/>
+    住址：{{address}} <hr/>
+    <!--点击事件调用函数-->
+    <button type="button" @click="sayHi()">打招呼</button>
+    <button type="button" @click="updateInfo()">换地址</button>
+</div>
+
+<script type="text/javascript">
+    /*
+    Vue对象使用三个属性：el, data, methods
+    */
+    new Vue({
+        el: "#app",
+        data: {
+            name: "牛魔王",
+            address: "火焰山"
+        },
+        methods: {
+            sayHi() {
+                //this表示当前Vue对象，直接获取它的data中的属性值
+                alert("你好，我是" + this.name + "，住在" + this.address);
+            },
+            updateInfo() {
+                //直接修改data中的属性值
+                this.name = "狐狸精";
+                this.address = "狐狸洞";
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

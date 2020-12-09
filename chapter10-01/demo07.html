@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>v-model双向绑定值</title>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    姓名：<input type="text" name="name" v-model="name"> <br>
+    性别：
+    <input type="radio" name="sex" v-model="sex" value="男">男
+    <input type="radio" name="sex" v-model="sex" value="女">女
+    <br>
+    爱好：
+    <input type="checkbox" name="hobby" value="游泳" v-model="hobby">游泳
+    <input type="checkbox" name="hobby" value="看书" v-model="hobby">看书
+    <input type="checkbox" name="hobby" value="下棋" v-model="hobby">下棋
+    <br>
+    学历：
+    <select name="edu" v-model="edu">
+        <option>高中</option>
+        <option>大专</option>
+        <option>本科</option>
+        <option>硕士</option>
+    </select>
+    <hr>
+    <input type="button" value="显示值" id="btnBind" @click="showInfo">
+</div>
+
+<script type="text/javascript">
+    let app = new Vue({
+        el: "#app",
+        data: {
+            name: "白骨精",
+            sex: "女",
+            hobby:["看书","下棋"],
+            edu: "本科"
+        },
+        methods: {
+            showInfo() {
+                alert("姓名：" + this.name + "，性别：" + this.sex + "，爱好：" + this.hobby + "，学历：" + this.edu);
+            }
+        }
+    });
+</script>
+</body>
+</html>
