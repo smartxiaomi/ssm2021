@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+	<!-- 奔驰车类 -->
+	<bean class="com.ssmbook2020.BenZ" id="benZ" scope="singleton"
+		lazy-init="true" init-method="init" destroy-method="destroy" />
+
+	<!-- 注入简单类型 -->
+
+	<!-- <bean class="com.ssmbook2020.Customer" id="customer"> <constructor-arg 
+		name="id" value="100" /> <constructor-arg name="name" value="白骨精" /> <constructor-arg 
+		name="male" value="true" /> <constructor-arg name="birthday" ref="birthday" 
+		type="java.util.Date" /> </bean> -->
+
+	<!-- 使用set方法注入 属性名：为id value为200 -->
+<!-- 	<bean class="com.ssmbook2020.Customer" id="customer">
+		<property name="id" value="200" />
+		<property name="name" value="猪八戒" />
+		<property name="male" value="true" />
+		<property name="birthday" ref="birthday" />
+	</bean> -->
+
+
+	<bean class="com.ssmbook2020.Customer" id="customer" p:id="300"
+		p:name="孙悟空" p:male="false" p:birthday-ref="birthday" />
+
+	<!-- 引用类型：现在的时间 -->
+	<bean class="java.util.Date" id="birthday" />
+
+</beans>
