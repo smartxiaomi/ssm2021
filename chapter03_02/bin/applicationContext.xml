@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/aop 
+	https://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+
+ 	<!--正常业务对象-->
+    <bean class="com.ssmbook2020.service.impl.AccountServiceImpl" id="accountService"/>
+
+    <!-- 切面类：日志记录对象 -->
+    <bean class="com.ssmbook2020.utils.LogAspect" id="logAspect"/>
+
+    <!-- 编写aop的配置，要导入aop的命名空间 -->
+    <aop:config>
+        <!--
+        	配置切入点，通过切入点表达式配置
+         	id：给表达式定义唯一标识
+         	expression: 使用切入点函数定义表达式，语法：访问修饰符 返回类型 包名.类名.方法名(参数类型) 抛出异常类型
+         -->
+        <aop:pointcut id="pt" expression="execution(public void com.ssmbook2020.service.impl.AccountServiceImpl.save())"/>
+
+        <!-- 切面配置， ref引用切面对象id -->
+        <aop:aspect ref="logAspect">
+            <!--
+           	 使用什么类型的通知：前置通知，后置通知等
+            method：表示切面中方法名字
+            pointcut-ref：引用上面切入点表达式
+            -->
+            <aop:before method="printLog" pointcut-ref="pt"/>
+        </aop:aspect>
+    </aop:config>
+</beans>

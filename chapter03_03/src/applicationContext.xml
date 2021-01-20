@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+http://www.springframework.org/schema/aop
+http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+
+	<!-- 日志记录类 -->
+	<bean id="loggerAdvice" class="com.ssmbook2020.utils.LoggerAdvice" />
+	<!-- 业务类 -->
+	<bean id="userService"
+		class="com.ssmbook2020.service.impl.UserServiceImpl" />
+	<!-- 织入使用注解定义的增强，需要引入aop命名空间 -->
+	<aop:aspectj-autoproxy />
+
+</beans>
